@@ -3,6 +3,15 @@
 # Separate script to remove faculty users (not part of assignment)
 # Removes all users that were added from the faculty list
 
+
+#license check before running the file, prevents other files being run before
+#the license check is made in main.sh
+if [[ ! -f "$HOME/.sysdat_93820.dat" ]]; then
+        echo "ERROR: License check failed. Run main.sh first."
+        exit 1
+fi
+
+
 PARSER_SCRIPT="parse.sh"
 OUTPUT_FILE="staff.txt"
 

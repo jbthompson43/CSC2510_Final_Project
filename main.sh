@@ -2,6 +2,9 @@
 # main.sh
 # Main script with menu for user management operations
 
+source ./license_check.sh || exit 1
+
+
 PARSER_SCRIPT="parse.sh"
 USER_ADD_SCRIPT="user_add.sh"
 OUTPUT_FILE="staff.txt"

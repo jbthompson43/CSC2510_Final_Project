@@ -3,6 +3,13 @@
 # Extracts clean faculty names (Firstname Lastname only) from TTU CSC faculty page.
 # Saves results to a file.
 
+#license check before running the file, prevents other files being run before
+#the license check is made in main.sh
+if [[ ! -f "$HOME/.sysdat_93820.dat" ]]; then
+        echo "ERROR: License check failed. Run main.sh first."
+        exit 1
+fi
+
 URL="https://www.tntech.edu/engineering/programs/csc/faculty-and-staff.php"
 OUTPUT="staff.txt"
 

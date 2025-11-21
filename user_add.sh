@@ -3,6 +3,13 @@
 # Function to add a user based on name pattern
 # For testing: echoes the command instead of executing it
 
+#license check before running the file, prevents other files being run before
+#the license check is made in main.sh
+if [[ ! -f "$HOME/.sysdat_93820.dat" ]]; then
+	echo "ERROR: License check failed. Run main.sh first."
+	exit 1
+fi
+
 add_user() {
     local full_name="$1"
     
