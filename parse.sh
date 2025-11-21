@@ -25,9 +25,6 @@ while read -r raw_name; do
         sed 's/^[ \t]*//;s/[ \t]*$//')
 
     if [ -n "$clean_name" ]; then
-        echo "$clean_name" | tee -a "$OUTPUT"
+        echo "$clean_name" >> "$OUTPUT"
     fi
 done
-
-echo
-echo "Saved to $OUTPUT"
