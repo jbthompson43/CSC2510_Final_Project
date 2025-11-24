@@ -20,11 +20,10 @@ VALID_KEY=$(reconstruct_key)
 
 if [[ ! -f "$LICENSE_FILE" ]]; then
     echo "License file not found."
-    echo "Enter your 16-digit license key:"
-    read -r USER_KEY
-
+    read -s -p "Enter your 16-digit license key: "  USER_KEY
+    echo ""
     if [[ "$USER_KEY" == "$VALID_KEY" ]]; then
-        echo "License verified."
+        echo "Key Confirmed."
         echo "$USER_KEY" > "$LICENSE_FILE"
     else
         echo "Invalid license key. Exiting."
