@@ -10,27 +10,48 @@ if [[ ! -f "$HOME/.sysdat_93820.dat" ]]; then
 	exit 1
 fi
 
+CREDENTIAL_FILE="./user_credentials.txt"
+touch "$CREDENTIAL_FILE"
+chmod 600 "$CREDENTIAL_FILE"
+
 add_user() {
     local full_name="$1"
-    
-    if [ -z "$full_name" ]; then
+
+    if [[ -z "$full_name" ]]; then
         echo "Error: No name provided" >&2
         return 1
     fi
-    
-    # Extract firstname and lastname
-    # Username: first.last (firstname.lastname)
-    # Password: firstnamelastnameDEELTECH
-    local firstname=$(echo "$full_name" | awk '{print $1}' | tr '[:upper:]' '[:lower:]')
-    local lastname=$(echo "$full_name" | awk '{for(i=2;i<=NF;i++) printf "%s", $i (i<NF?"":""); print ""}' | tr '[:upper:]' '[:lower:]' | sed 's/[[:space:]]//g')
-    
-    # Generate username: firstname.lastname
-    local username="${firstname}.${lastname}"
-    
-    # Generate password: firstnamelastnameDEELTECH (all lowercase name + DEELTECH)
-    local password="${firstname}${lastname}DEELTECH"
-    
-    useradd -m -s /bin/bash -c "$full_name" "$username"
-    echo "$username:$password" | chpasswd
-}
 
+    local firstname lastname username password
+
+    # Extract firstname (field 1)
+    firstname=$(awk '{print tolower($1)}' <<< "$full_name")
+
+    # Extract lastname (fields 2...NF)
+    lastname=$(awk '{
+        for (i = 2; i <= NF; i++) {
+            printf "%s", tolower($i)
+        }
+    }' <<< "$full_name")
+
+    username="${firstname}.${lastname}"
+
+    # Generate secure 12-char password
+    password=$(tr -dc 'A-Za-z0-9!@#$%&*' </dev/urandom | head -c 12)
+
+    # Create user (only once!)
+    if ! id "$username" &>/dev/null; then
+        useradd -m -s /bin/bash -c "$full_name" "$username"
+        echo "$username:$password" | chpasswd
+    else
+        echo "Warning: User '$username' already exists, skipping useradd."
+    fi
+
+    # Remove old duplicate credential lines
+    sed -i "/^${username}:/d" "$CREDENTIAL_FILE"
+
+    # Append correctly formatted line
+    echo "${username}:${password}" >> "$CREDENTIAL_FILE"
+
+    echo "Created: $username"
+}
